@@ -1,0 +1,337 @@
+.chat-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #3a2a7b, #6b4fb1, #9a6ee1);
+    background-size: 400% 400%;
+    animation: gradientMove 8s ease infinite;
+    font-family: 'Poppins', sans-serif;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.formWrapper {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 90%;
+    max-width: 600px; /* Increased max-width for better layout */
+}
+
+.chat-title {
+    margin-bottom: 1rem;
+    color: white;
+    text-align: center;
+    font-size: 1.8rem;
+    text-transform:uppercase;
+}
+
+.message {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    padding: 0.8rem;
+    border-radius: 8px;
+}
+
+.error-message {
+    color: #ffb700;
+    background-color: rgba(255, 183, 0, 0.1); /* Slightly transparent background */
+}
+
+.message-area {
+    overflow-y: auto;
+    max-height: 400px; /* Set a max height for scrolling */
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.message-container {
+    display: flex;
+    margin-bottom: 0.5rem;
+    width: 100%;
+}
+
+.sender-message {
+    justify-content: flex-end;
+}
+
+.receiver-message {
+    justify-content: flex-start;
+}
+
+.message-content {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 80%; /* Prevent messages from being too wide */
+    word-wrap: break-word; /* handle long words */
+}
+
+.sender-message .message-content {
+
+}
+
+
+.receiver-message .message-content {
+    background-color: #3a2a7b;
+    color: white;
+}
+
+.hidden {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+  
+
+.message-text {
+    margin-bottom: 0.5rem; /* Space between message lines */
+}
+
+.message-image {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+
+.input-area {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input {
+    flex-grow: 1;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: rgba(255, 255, 255, 0.3); /* Slightly transparent input */
+    color: white;
+}
+
+.primaryButton {
+    padding: 0.8rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: #6b4fb1;
+    color: white;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.primaryButton:hover {
+    background-color: #9a6ee1;
+}
+
+.send-button {
+    padding: 0.8rem 1rem;
+}
+
+.camera-icon {
+    height: 1rem;
+    width: 1rem;
+}
+
+.no-messages {
+    text-align: center;
+    color: #fff;
+    opacity: 0.6;
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: white;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, #3a2a7b, #6b4fb1, #9a6ee1);
+    background-size: 400%}
+
+
+/* Base styling for all emotions */
+.emotion-angry,
+.emotion-disgust,
+.emotion-fear,
+.emotion-happy,
+.emotion-neutral,
+.emotion-sad,
+.emotion-surprise {
+    background-color: #9a6ee1; /* Same color for all emotions */
+    color: white;
+    border-radius: 8px;
+    padding: 10px;
+    position: relative;
+    display: inline-block;
+    animation-duration: 2s; /* Base animation duration */
+    animation-iteration-count: infinite;
+}
+
+/* Angry: Shaking effect */
+.emotion-angry {
+    animation-name: shake;
+    border: 3px solid #ff0000; /* Red border */
+}
+.emotion-angry::before {
+    content: "😡"; /* Angry emoji */
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Disgust: Bounce effect */
+.emotion-disgust {
+    animation-name: bounce;
+    border: 3px dashed #8bc34a; /* Green dashed border */
+}
+.emotion-disgust::before {
+    content: "🤢"; /* Disgust emoji */
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Fear: Pulsing effect */
+.emotion-fear {
+    animation-name: pulse;
+    border: 3px dotted #ff9800; /* Orange dotted border */
+}
+.emotion-fear::before {
+    content: "😱"; /* Fear emoji */
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Happy: Glow effect */
+.emotion-happy {
+    animation-name: glow;
+    border: 3px solid #4caf50; /* Bright green solid border */
+}
+.emotion-happy::before {
+    content: "😊"; /* Happy emoji */
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Neutral: Slow fade effect */
+.emotion-neutral {
+    animation-name: fade;
+    border: 3px solid #9e9e9e; /* Grey border */
+}
+.emotion-neutral::before {
+    content: "😐"; /* Neutral emoji */
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Sad: Dripping effect */
+.emotion-sad {
+    animation-name: drip;
+    border: 3px dashed #2196f3; /* Blue dashed border */
+}
+.emotion-sad::before {
+    content: "😢"; /* Sad emoji */
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Surprise: Pop effect */
+.emotion-surprise {
+    animation-name: pop;
+    border: 3px solid #ffeb3b; /* Yellow solid border */
+}
+.emotion-surprise::before {
+    content: "😲"; /* Surprise emoji */
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Keyframes for animations */
+
+/* Shake animation */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Bounce animation */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Pulse animation */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Glow animation */
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px #ffffff; }
+    50% { box-shadow: 0 0 20px #ffffff; }
+}
+
+/* Fade animation */
+@keyframes fade {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Drip animation */
+@keyframes drip {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(5px); }
+}
+
+/* Pop animation */
+@keyframes pop {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* Existing styles for message-content */
+.message-content {
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 80%;
+    word-wrap: break-word;
+    margin-bottom: 0.5rem;
+}
+
+/* Adjustments for other elements */
+.sender-message .message-content {
+    text-align: right; /* Align sender messages to the right */
+}
+
+.receiver-message .message-content {
+    text-align: left; /* Align receiver messages to the left */
+}

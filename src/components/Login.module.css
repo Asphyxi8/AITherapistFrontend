@@ -1,0 +1,84 @@
+.loginContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #3a2a7b, #6b4fb1, #9a6ee1);
+    background-size: 400% 400%;
+    animation: gradientMove 8s ease infinite;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .formWrapper {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+  }
+  
+  h2 {
+    margin-bottom: 1rem;
+    color: white;
+    font-size: 1.8rem;
+  }
+  
+  .message {
+    margin-bottom: 1rem;
+    color: #ffb700;
+    font-size: 0.9rem;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .input {
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  
+  .primaryButton, .toggleButton {
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .primaryButton {
+    background-color: #6b4fb1;
+    color: white;
+    transition: background-color 0.3s ease;
+  }
+  
+  .primaryButton:hover {
+    background-color: #9a6ee1;
+  }
+  
+  .toggleButton {
+    background: transparent;
+    color: #fff;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    transition: opacity 0.3s ease;
+  }
+  
+  .toggleButton:hover {
+    opacity: 0.8;
+  }
+  

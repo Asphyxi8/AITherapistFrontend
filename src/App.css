@@ -1,0 +1,26 @@
+.login-container, .conversations-container, .chat-container {
+  padding: 20px;
+}
+
+input {
+  margin: 10px 0;
+  padding: 8px;
+  font-size: 14px;
+}
+
+button {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.messages {
+  background-color: #f1f1f1;
+  padding: 10px;
+  height: 400px;
+  overflow-y: scroll;
+  white-space: pre-wrap;
+  margin-bottom: 20px;
+}
