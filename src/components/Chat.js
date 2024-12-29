@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Camera } from "lucide-react";
+import { Camera, Plus } from "lucide-react";
 import styles from "./Chat.module.css";
+
 
 const Chat = () => {
   const { conversationId } = useParams();
@@ -13,10 +14,81 @@ const Chat = () => {
   const [isWebcamReady, setIsWebcamReady] = useState(false);
   const [chatTitle, setChatTitle] = useState("");
   const [loading, setLoading] = useState(true);
+  const [currentEmotion, setCurrentEmotion] = useState('neutral');
+  const [conversations, setConversations] = useState([]);
+  const [newTitle, setNewTitle] = useState(""); // Add this state for new conversation title
+  const [showNewConversationInput, setShowNewConversationInput] = useState(false); // Add this state
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
 
+  const handleCreateNewConversation = async () => {
+    if (!newTitle.trim()) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Please log in again.");
+      navigate("/");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/new_conversation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title: newTitle }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Add new conversation to the list
+        setConversations(prev => [...prev, { id: data.conversation_id, title: newTitle }]);
+        // Reset input and hide it
+        setNewTitle("");
+        setShowNewConversationInput(false);
+        // Navigate to the new conversation
+        navigate(`/chat/${data.conversation_id}`);
+      } else {
+        throw new Error("Failed to create new conversation");
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+  // Fetch all conversations for sidebar
+  useEffect(() => {
+    const fetchConversations = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("Please log in again.");
+        navigate("/");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5000/conversations", {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setConversations(data);
+        }
+      } catch (err) {
+        setError("Failed to load conversations");
+      }
+    };
+
+    fetchConversations();
+  }, [navigate]);
+
+  // Fetch current conversation
   useEffect(() => {
     const fetchConversation = async () => {
       try {
@@ -40,8 +112,19 @@ const Chat = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setMessages(data.messages);
-          setChatTitle(data.title);
+          if (data && data.messages) {
+            setMessages(data.messages);
+            setChatTitle(data.title);
+            
+            // Set the emotion based on the last user message
+            const userMessages = Object.values(data.messages).filter(msg => msg.role === "user");
+            if (userMessages.length > 0) {
+              const lastUserMessage = userMessages[userMessages.length - 1];
+              if (lastUserMessage.emotion) {
+                setCurrentEmotion(lastUserMessage.emotion);
+              }
+            }
+          }
         } else {
           throw new Error(`Server returned ${response.status}`);
         }
@@ -52,7 +135,9 @@ const Chat = () => {
       }
     };
 
-    fetchConversation();
+    if (conversationId) {
+      fetchConversation();
+    }
   }, [conversationId, navigate]);
 
   const initializeWebcam = async () => {
@@ -122,6 +207,20 @@ const Chat = () => {
       const snapshot = await captureSnapshot();
       const payload = { message: newMessage, snapshot };
 
+      // Immediately add the new message to the UI
+      const tempMessageId = Date.now().toString();
+      const newMessageObj = {
+        role: "user",
+        message: newMessage,
+        snapshot: snapshot,
+        emotion: currentEmotion // Use current emotion as default
+      };
+
+      setMessages(prevMessages => ({
+        ...prevMessages,
+        [tempMessageId]: newMessageObj
+      }));
+
       const response = await fetch(
         `http://localhost:5000/conversation/${conversationId}`,
         {
@@ -135,8 +234,20 @@ const Chat = () => {
       );
 
       if (response.ok) {
-        const updatedMessages = await response.json();
-        setMessages(updatedMessages.updated_messages);
+        const data = await response.json();
+        console.log("Server response:", data); // For debugging
+
+        if (data && data.updated_messages) {
+          setMessages(data.updated_messages);
+          
+          // Update emotion based on the new message
+          const newUserMessage = Object.values(data.updated_messages)
+            .find(msg => msg.message === newMessage && msg.role === "user");
+          if (newUserMessage?.emotion) {
+            setCurrentEmotion(newUserMessage.emotion);
+          }
+        }
+        
         setNewMessage("");
 
         if (streamRef.current) {
@@ -148,95 +259,144 @@ const Chat = () => {
         throw new Error(`Server returned ${response.status}`);
       }
     } catch (err) {
+      console.error("Error sending message:", err);
       setError(err.message);
     }
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
+      e.preventDefault();
+      sendMessage();
     }
-};
+  };
 
-if (loading) return <div className="loading-container">Loading conversation...</div>;
+  const handleConversationClick = (convId) => {
+    navigate(`/chat/${convId}`);
+  };
 
-return (
-    <div className={styles['chat-container']}>
+  if (loading) return <div className="loading-container">Loading conversation...</div>;
 
-    <div className={styles['form-wrapper']}>
-
-        <h2 className={styles['chat-title']}>{chatTitle}</h2>
-
-        {error && (
-            <div className={styles['message error-message']}>
-                {error}
+  return (
+    <div className={styles['chat-page-container']}>
+      <div className={styles['sidebar']}>
+        <h3 className={styles['sidebar-title']}>Conversations</h3>
+        <div className={styles['new-conversation-section']}>
+          {showNewConversationInput ? (
+            <div className={styles['new-conversation-input-group']}>
+              <input
+                type="text"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                placeholder="Enter conversation title"
+                className={styles['new-conversation-input']}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleCreateNewConversation();
+                  }
+                }}
+              />
+              <button 
+                onClick={handleCreateNewConversation}
+                className={styles['create-button']}
+              >
+                Create
+              </button>
             </div>
-        )}
+          ) : (
+            <button
+              onClick={() => setShowNewConversationInput(true)}
+              className={styles['new-conversation-button']}
+            >
+              <Plus size={20} />
+              New Conversation
+            </button>
+          )}
+        </div>
 
-<div className={styles['message-area']}>
-    {Object.keys(messages).length > 0 ? (
-        Object.entries(messages).map(([key, msg]) => {
-            const emotionClass =
-                msg.role === "user" ? styles[`emotion-${msg.emotion}`] : "";
+        <div className={styles['conversation-list']}>
+          {conversations.map((conv) => (
+            <div
+              key={conv.id}
+              className={`${styles['conversation-item']} ${
+                conv.id === conversationId ? styles['active'] : ''
+              }`}
+              onClick={() => handleConversationClick(conv.id)}
+            >
+              {conv.title}
+            </div>
+          ))}
+        </div>
+      </div>
 
-            return (
-                <div
-                    key={key}
-                    className={`${styles['message-container']} ${
-                        msg.role === "user"
-                            ? styles['sender-message']
-                            : styles['receiver-message']
-                    }`}
-                >
+      <div className={`${styles['chat-container']} ${styles[`emotion-${currentEmotion}`]}`}>
+        <div className={styles['form-wrapper']}>
+          <h2 className={styles['chat-title']}>{chatTitle}</h2>
+
+          {error && (
+            <div className={styles['message error-message']}>
+              {error}
+            </div>
+          )}
+
+          <div className={styles['message-area']}>
+            {messages && Object.entries(messages).length > 0 ? (
+              Object.entries(messages)
+                .sort(([keyA], [keyB]) => keyA - keyB)
+                .map(([key, msg]) => {
+                  const emotionClass = msg.role === "user" ? styles[`emotion-${msg.emotion}`] : "";
+
+                  return (
                     <div
-                        className={`${styles['message-content']} ${emotionClass}`}
+                      key={key}
+                      className={`${styles['message-container']} ${
+                        msg.role === "user"
+                          ? styles['sender-message']
+                          : styles['receiver-message']
+                      }`}
                     >
+                      <div className={`${styles['message-content']} ${emotionClass}`}>
                         {msg.message.split("\n").map((line, i) => (
-                            <p key={i} className={styles['message-text']}>
-                                {line}
-                            </p>
+                          <p key={i} className={styles['message-text']}>
+                            {line}
+                          </p>
                         ))}
                         {msg.snapshot && (
-                            <img
-                                src={msg.snapshot}
-                                alt="Message snapshot"
-                                className={styles['message-image']}
-                            />
+                          <img
+                            src={msg.snapshot}
+                            alt="Message snapshot"
+                            className={styles['message-image']}
+                          />
                         )}
+                      </div>
                     </div>
-                </div>
-            );
-        })
-    ) : (
-        <p className={styles['no-messages']}>No messages yet.</p>
-    )}
-</div>
+                  );
+                })
+            ) : (
+              <p className={styles['no-messages']}>No messages yet.</p>
+            )}
+          </div>
 
-
-        <div className={styles['input-area']}>
+          <div className={styles['input-area']}>
             <input
-                type="text"
-                placeholder="Type a message"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className={styles['input']}
+              type="text"
+              placeholder="Type a message"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className={styles['input']}
             />
-            <button onClick={sendMessage} className={styles['primaryButton send-button']}>
-                <Camera className={styles['camera-icon']} />
-                Send
+            <button onClick={sendMessage} className={styles['send-button']}>
+              <Camera className={styles['camera-icon']} />
+              Send
             </button>
-            
+          </div>
+
+          <video ref={videoRef} autoPlay playsInline muted className={styles['hidden']} />
         </div>
-        {/* <h2 className={styles['chat-title']}>{emotion}</h2> */}
-
-        <video ref={videoRef} autoPlay playsInline muted className={styles['hidden']} />
-
+      </div>
     </div>
-
-</div>
-)
+  );
 };
 
 export default Chat;

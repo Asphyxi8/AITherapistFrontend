@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: linear-gradient(135deg, #3a2a7b, #6b4fb1, #9a6ee1);
+    background: linear-gradient(135deg, #3a2a7b, #251d39, #824ed7);
     background-size: 400% 400%;
     animation: gradientMove 8s ease infinite;
     font-family: 'Poppins', sans-serif;
@@ -61,7 +61,7 @@
   }
   
   .primaryButton {
-    background-color: #6b4fb1;
+    background-color: #584193;
     color: white;
     transition: background-color 0.3s ease;
   }
@@ -81,4 +81,27 @@
   .toggleButton:hover {
     opacity: 0.8;
   }
+  /* Add at the end of your CSS file */
+:global(.Toastify__toast-container) {
+  z-index: 9999 !important;
+}
+
+:global(.Toastify__toast) {
+  background: rgba(0, 0, 0, 0.8) !important;
+  border-radius: 8px !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+:global(.Toastify__toast--success) {
+  background: rgba(72, 187, 120, 0.9) !important;
+}
+
+:global(.Toastify__toast--error) {
+  background: rgba(245, 101, 101, 0.9) !important;
+}
+
+:global(.Toastify__toast-body) {
+  color: white !important;
+  font-size: 14px !important;
+}
   

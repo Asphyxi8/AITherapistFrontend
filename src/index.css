@@ -11,3 +11,45 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  transition: background 0.5s ease;
+}
+/* Global styles for notifications */
+.Toastify__toast-container {
+  z-index: 9999 !important;
+}
+
+.Toastify__toast {
+  background: rgba(0, 0, 0, 0.8) !important;
+  border-radius: 8px !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.Toastify__toast--success {
+  background: rgba(72, 187, 120, 0.9) !important;
+}
+
+.Toastify__toast--error {
+  background: rgba(245, 101, 101, 0.9) !important;
+}
+
+.Toastify__toast-body {
+  color: white !important;
+  font-size: 14px !important;
+}
+
+/* Base app styles */
+.App {
+  min-height: 100vh;
+  width: 100%;
+}
