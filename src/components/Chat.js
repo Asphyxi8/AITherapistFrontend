@@ -7,7 +7,7 @@ import styles from "./Chat.module.css";
 const Chat = () => {
   const { conversationId } = useParams();
   const navigate = useNavigate();
-
+  const [expandedMessage, setExpandedMessage] = useState(null); 
   const [messages, setMessages] = useState({});
   const [newMessage, setNewMessage] = useState("");
   const [error, setError] = useState(null);
@@ -339,43 +339,74 @@ const Chat = () => {
             </div>
           )}
 
-          <div className={styles['message-area']}>
-            {messages && Object.entries(messages).length > 0 ? (
-              Object.entries(messages)
-                .sort(([keyA], [keyB]) => keyA - keyB)
-                .map(([key, msg]) => {
-                  const emotionClass = msg.role === "user" ? styles[`emotion-${msg.emotion}`] : "";
+<div className={styles['message-area']}>
+  {messages && Object.entries(messages).length > 0 ? (
+    Object.entries(messages)
+      .sort(([keyA], [keyB]) => keyA - keyB)
+      .map(([key, msg]) => {
+        const isUser = msg.role === "user";
+        const emotionClass = isUser ? styles[`emotion-${msg.emotion}`] : "";
 
-                  return (
-                    <div
-                      key={key}
-                      className={`${styles['message-container']} ${
-                        msg.role === "user"
-                          ? styles['sender-message']
-                          : styles['receiver-message']
-                      }`}
-                    >
-                      <div className={`${styles['message-content']} ${emotionClass}`}>
-                        {msg.message.split("\n").map((line, i) => (
-                          <p key={i} className={styles['message-text']}>
-                            {line}
-                          </p>
-                        ))}
-                        {msg.snapshot && (
-                          <img
-                            src={msg.snapshot}
-                            alt="Message snapshot"
-                            className={styles['message-image']}
-                          />
-                        )}
-                      </div>
+        return (
+          <div
+            key={key}
+            className={`${styles['message-container']} ${
+              isUser ? styles['sender-message'] : styles['receiver-message']
+            }`}
+          >
+            <div className={`${styles['message-content']} ${emotionClass}`}>
+              {isUser ? (
+                // User's message
+                msg.message.split("\n").map((line, i) => (
+                  <p key={i} className={styles['message-text']}>
+                    {line}
+                  </p>
+                ))
+              ) : (
+                // Therapist's response
+                <>
+                  <p className={styles['message-text']}>{msg.answer}</p>
+                <hr></hr>
+                  {/* Expandable button for therapy details */}
+                  <button
+  className={styles['therapy-toggle']}
+  onClick={() => setExpandedMessage(expandedMessage === key ? null : key)}
+>
+  {expandedMessage === key ? (
+    "▲" // Up arrow for "Hide"
+  ) : (
+    "▼" // Down arrow for "View"
+  )}
+</button>
+
+
+
+                  {/* Therapy details section */}
+                  {expandedMessage === key && (
+                    <div className={styles['therapy-details']}>
+                      <h4 className={styles['therapy-name']}>
+                        <strong>Technique:</strong> {msg.therapy.name}
+                      </h4>
+                      <p className={styles['therapy-reason']}>
+                        <strong>Reason:</strong> {msg.therapy.reason}
+                      </p>
+                      <p className={styles['therapy-description']}>
+                        <strong>Description:</strong> {msg.therapy.description}
+                      </p>
                     </div>
-                  );
-                })
-            ) : (
-              <p className={styles['no-messages']}>No messages yet.</p>
-            )}
+                  )}
+                </>
+              )}
+            </div>
           </div>
+        );
+      })
+  ) : (
+    <p>No messages found.</p>
+  )}
+</div>
+
+
 
           <div className={styles['input-area']}>
             <input

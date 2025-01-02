@@ -8,9 +8,61 @@
     flex: 1;
     height: 100vh;
     overflow-y: auto;
-    background: linear-gradient(to bottom, var(--emotion-color), #2a1a4a);
-    transition: background 0.3s ease;
+    background: linear-gradient(45deg, #332161 75%, var(--emotion-color) 100%);
+    background-size: 200% 200%; /* This is key to make the background "larger" so it can move */
+    animation: backgroundMove 10s ease infinite; /* Animate over 10 seconds, infinite loop */
+  }
+  
+  /* Define the animation */
+  @keyframes backgroundMove {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+
+/* For the expanded therapy details */
+/* Default state when hidden */
+.therapy-details {
+  background-color: #f9f9f9;
+  color: #333;
+  padding: 10px; /* Minimal padding when collapsed */
+  border-radius: 8px;
+  max-height: 500px;
+  overflow: hidden; /* Hide content when collapsed */
+  transition: max-height 0.4s ease, padding 0.4s ease; /* Smooth transition */
 }
+
+
+
+/* For the expanded therapy name, reason, and description */
+.therapy-name,
+.therapy-reason,
+.therapy-description {
+  margin: 5px 0;
+  color: #333; /* Ensure text is dark and readable */
+}
+
+/* For the toggle button */
+.therapy-toggle {
+  background-color: #e0e0e0; /* Lighter background for the button */
+  color: #333; /* Dark text */
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.therapy-toggle:hover {
+  background-color: #c0c0c0;
+}
+
 
 /* Define emotion color variables */
 .chat-container.emotion-angry {
@@ -114,48 +166,6 @@
     color: #666;
 }
 
-  /* Sidebar styles */
-  .sidebar {
-    width: 250px;
-    background: rgba(0, 0, 0, 0.8); /* Darkened from 0.2 to 0.8 */
-    backdrop-filter: blur(10px);
-    padding: 20px;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    overflow-y: auto;
-}
-  
-  .sidebar-title {
-    color: white;
-    margin-bottom: 20px;
-    font-size: 1.2rem;
-    text-align: center;
-  }
-  
-  .conversation-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .conversation-item {
-    padding: 10px 15px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.15); /* Darkened from 0.1 to 0.15 */
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-  
-.conversation-item:hover {
-    background: rgba(255, 255, 255, 0.25); /* Darkened from 0.2 to 0.25 */
-    transform: translateX(5px);
-}
-
-.conversation-item.active {
-    background: rgba(255, 255, 255, 0.35); /* Darkened from 0.3 to 0.35 */
-    border-left: 4px solid white;
-}
-  
   /* Form and content styles */
   .form-wrapper {
     max-width: 1200px;
@@ -333,16 +343,96 @@
     color: #333;
   }
   
-  .create-button {
-    padding: 8px 16px;
-    background: #4CAF50;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  :root {
+    --primary-purple: #8a74c3; /* Main purple color */
+    --secondary-purple: #3e2874; /* Lighter purple for gradients */
+    --hover-purple: #340a50; /* Hover effect color */
+    --text-color: #ffffff; /* White text */
   }
   
-  .create-button:hover {
-    background: #45a049;
+  .sidebar {
+    width: 250px;
+    padding: 20px;
+    overflow-y: auto;
+    position: relative; /* To keep layout flow */
+    background: linear-gradient(45deg, var(--primary-purple) 0%, var(--secondary-purple) 50%);
+    box-shadow: 0 4px 100px rgba(0, 0, 0, 0.3);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    z-index: 100;
   }
+  
+  /* Sidebar Title Styling */
+  .sidebar-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  
+  /* Conversation List */
+  .conversation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Individual Conversation Items */
+  .conversation-item {
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.1); /* Transparent white */
+    border-radius: 8px;
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  /* Hover Effect */
+  .conversation-item:hover {
+    background: rgba(255, 255, 255, 0.2); /* Darkened purple */
+    transform: scale(1.03);
+  }
+  
+  /* Active Conversation */
+  .conversation-item.active {
+    background: var(--hover-purple);
+    border-left: 4px solid #fff;
+  }
+  
+  /* New Conversation Button */
+  .new-conversation-button {
+    margin-top: 20px;
+    padding: 12px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-color);
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .new-conversation-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Scrollbar Styling */
+  .sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+  }
+  
+  .sidebar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
