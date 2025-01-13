@@ -1,0 +1,81 @@
+.testDetailContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #3a2a7b, #251d39, #824ed7);
+    background-size: 400% 400%;
+    animation: gradientMove 8s ease infinite;
+    padding: 20px;
+    border-radius: 8px;
+    color: white;
+    min-height: 100vh;
+    gap: 20px;
+  }
+  
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .testSection {
+    flex: 3;
+  }
+  
+  .wikiSection {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 16px;
+    border-radius: 8px;
+    color: white;
+  }
+  
+  .wikiSection h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .wikiImage {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .readMoreLink {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #5a41a1;
+    border-radius: 4px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
+  
+  .readMoreLink:hover {
+    background-color: #6b55b8;
+  }
+  
+  .questionBlock {
+    margin-bottom: 20px;
+  }
+  
+  .option {
+    margin-bottom: 10px;
+  }
+  
+  .submitButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #6b55b8;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .submitButton:hover {
+    background-color: #7c69d4;
+  }
+  

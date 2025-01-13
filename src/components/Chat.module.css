@@ -30,13 +30,16 @@
 /* For the expanded therapy details */
 /* Default state when hidden */
 .therapy-details {
-  background-color: #f9f9f9;
-  color: #333;
+  backdrop-filter: blur(10px); /* Frosted glass effect */
+  -webkit-backdrop-filter: blur(1px); /* Safari compatibility */
+  color: #ffffff;
   padding: 10px; /* Minimal padding when collapsed */
   border-radius: 8px;
   max-height: 500px;
   overflow: hidden; /* Hide content when collapsed */
   transition: max-height 0.4s ease, padding 0.4s ease; /* Smooth transition */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border to enhance frosted look */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Optional shadow for depth */
 }
 
 
@@ -46,7 +49,7 @@
 .therapy-reason,
 .therapy-description {
   margin: 5px 0;
-  color: #333; /* Ensure text is dark and readable */
+  color: #ffffff; /* Ensure text is dark and readable */
 }
 
 /* For the toggle button */
@@ -119,16 +122,38 @@
 
 /* Update these specific styles */
 .sender-message .message-content {
-    background-color: #E6E6FA !important; /* Light lavender */
-    color: #000 !important;
-    border-bottom-right-radius: 5px;
+  background: rgba(230, 230, 250, 0.8) !important; /* Light lavender with transparency */
+  backdrop-filter: blur(6px); /* Apply blur */
+  -webkit-backdrop-filter: blur(6px); /* Safari compatibility */
+  color: #000 !important;
+  border-bottom-right-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border for frosted effect */
+}
+.receiver-message .message-content {
+  background: linear-gradient(90deg, rgba(107, 79, 177, 0.8), rgba(140, 105, 204, 0.8), rgba(107, 79, 177, 0.8)) !important;
+  background-size: 200% 100%; /* Enables horizontal movement */
+  backdrop-filter: blur(6px); /* Apply blur */
+  -webkit-backdrop-filter: blur(6px); /* Safari compatibility */
+  color: white !important;
+  border-bottom-left-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border for frosted effect */
+  animation: wavyBackground 3s linear infinite; /* Attach animation */
 }
 
-.receiver-message .message-content {
-    background-color: #6b4fb1 !important; /* Purple */
-    color: white !important;
-    border-bottom-left-radius: 5px;
+/* Keyframes for wavy background animation */
+@keyframes wavyBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
+
+
 
 /* Remove or comment out any conflicting styles */
 /* .message {
