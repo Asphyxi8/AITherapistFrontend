@@ -7,7 +7,7 @@ const TestDetail = () => {
   const { testId } = useParams();
   const [test, setTest] = useState(null);
   const [answers, setAnswers] = useState([]);
-  const [wikiData, setWikiData] = useState(null); // State for Wikipedia data
+  const [wikiResults, setWikiResults] = useState([]); // State for multiple Wikipedia results
 
   useEffect(() => {
     console.log(JSON.stringify({ answers: answers }));
@@ -21,13 +21,13 @@ const TestDetail = () => {
       })
       .then((response) => {
         setTest(response.data);
-  
+
         // Initialize answers array based on number of questions
         const initialAnswers = response.data.format.questions.map(() => ({
           score: 0,
         }));
         setAnswers(initialAnswers);
-  
+
         // Wikipedia search API call
         const query = response.data.name;
         fetch(
@@ -38,19 +38,23 @@ const TestDetail = () => {
           .then((res) => res.json())
           .then((data) => {
             if (data.query?.search?.length) {
-              // Fetch detailed info about the top result
-              const topResult = data.query.search[0];
-              const title = topResult.title;
-  
-              fetch(
-                `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
-                  title
-                )}`
-              )
-                .then((res) => res.json())
-                .then((summaryData) => setWikiData(summaryData))
+              const topResults = data.query.search.slice(0, 1);
+              const detailedResultsPromises = topResults.map((result) =>
+                fetch(
+                  `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
+                    result.title
+                  )}`
+                ).then((res) => res.json())
+              );
+
+              // Fetch detailed info for each result
+              Promise.all(detailedResultsPromises)
+                .then((detailedResults) => setWikiResults(detailedResults))
                 .catch((error) =>
-                  console.error("Error fetching detailed Wikipedia data:", error)
+                  console.error(
+                    "Error fetching detailed Wikipedia data:",
+                    error
+                  )
                 );
             }
           })
@@ -62,7 +66,6 @@ const TestDetail = () => {
         console.error("Error fetching test:", error);
       });
   }, [testId]);
-  
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent the form from refreshing the page
@@ -129,27 +132,32 @@ const TestDetail = () => {
         </form>
       </div>
 
-      {wikiData && (
+      {wikiResults.length > 0 && (
         <div className={styles.wikiSection}>
-          <h2>Learn More: {wikiData.title}</h2>
-          {wikiData.thumbnail && (
-            <img
-              src={wikiData.thumbnail.source}
-              alt={wikiData.title}
-              className={styles.wikiImage}
-            />
-          )}
-          <p>{wikiData.extract}</p>
-          {wikiData.content_urls?.desktop && (
-            <a
-              href={wikiData.content_urls.desktop.page}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.readMoreLink}
-            >
-              Read more on Wikipedia
-            </a>
-          )}
+          <h2>Learn More:</h2>
+          {wikiResults.map((result, index) => (
+            <div key={index} className={styles.wikiResult}>
+              <h3>{result.title}</h3>
+              {result.thumbnail && (
+                <img
+                  src={result.thumbnail.source}
+                  alt={result.title}
+                  className={styles.wikiImage}
+                />
+              )}
+              <p>{result.extract}</p>
+              {result.content_urls?.desktop && (
+                <a
+                  href={result.content_urls.desktop.page}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.readMoreLink}
+                >
+                  Read more on Wikipedia
+                </a>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

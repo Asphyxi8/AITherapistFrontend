@@ -4,6 +4,7 @@ import styles from "./MyTests.module.css";
 
 const MyTests = () => {
   const [tests, setTests] = useState([]);
+  const [recommendedTests, setRecommendedTests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -26,6 +27,27 @@ const MyTests = () => {
 
     fetchTests();
   }, []);
+
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/recommend", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setRecommendedTests(response.data.recommendations);
+      } catch (err) {
+        setError("Failed to fetch recommendations. Please try again later.");
+        console.error(err);
+      }
+    };
+
+    // Only fetch recommendations if the tests have been fetched
+    if (tests.length > 0) {
+      fetchRecommendations();
+    }
+  }, [tests]);
 
   if (loading) return <div className={styles.loading}>Loading your tests...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
@@ -54,6 +76,29 @@ const MyTests = () => {
             ))}
           </tbody>
         </table>
+      )}
+
+      {/* Recommendations Section */}
+      {recommendedTests.length > 0 && (
+        <div className={styles.recommendationsSection}>
+          <h2 className={styles.recommendationsTitle}>Recommended Tests</h2>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Test Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recommendedTests.map((test) => (
+                <tr key={test.test_id}>
+                  <td>{test.test_name}</td>
+                  <td>{test.test_description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
