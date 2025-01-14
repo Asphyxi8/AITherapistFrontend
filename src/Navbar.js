@@ -34,18 +34,24 @@ const Navbar = () => {
     }
   }, [navigate]);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/"); // Redirect to login page after logout
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <h1 className="navbar-logo">Test Portal</h1>
         <ul className="navbar-links">
-          {!isLoggedIn && (
+          {/* {!isLoggedIn && (
             <li>
               <NavLink to="/" className="nav-link" end>
                 Login
               </NavLink>
             </li>
-          )}
+          )} */}
           <li>
             <NavLink to="/tests" className="nav-link">
               Tests
@@ -61,6 +67,13 @@ const Navbar = () => {
               Conversations
             </NavLink>
           </li>
+          {isLoggedIn && (
+            <li>
+              <button onClick={handleLogout} className="logout-button">
+                Logout
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </nav>
