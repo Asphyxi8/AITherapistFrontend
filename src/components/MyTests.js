@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "./MyTests.module.css";
+import { useNavigate } from 'react-router-dom';
 
 const MyTests = () => {
   const [tests, setTests] = useState([]);
   const [recommendedTests, setRecommendedTests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTests = async () => {
@@ -87,6 +89,7 @@ const MyTests = () => {
               <tr>
                 <th>Test Name</th>
                 <th>Description</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -94,6 +97,7 @@ const MyTests = () => {
                 <tr key={test.test_id}>
                   <td>{test.test_name}</td>
                   <td>{test.test_description}</td>
+                  <td><button className ="logout-button" onClick={() => navigate(`/tests/${test.test_id}`)}>Take Test</button></td>
                 </tr>
               ))}
             </tbody>

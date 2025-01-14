@@ -11,6 +11,36 @@
   min-height: 100vh;
 }
 
+  /* Logout Button Styles */
+  .logout-button {
+    background-color: rgba(255, 255, 255, 0.2); /* Similar to the nav-link hover effect */
+    color: white;
+    border: none;
+    padding: 4px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .logout-button:hover {
+    background-color: rgba(255, 255, 255, 0.3); /* Darker shade on hover */
+    transform: scale(1.1);
+  }
+  
+  .logout-button:focus {
+    outline: none;
+  }
+  
+  /* Optional: If you want to add a "sign out" icon next to the button text */
+  .logout-button svg {
+    margin-right: 8px;
+  }
+  
+
 @keyframes gradientMove {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
