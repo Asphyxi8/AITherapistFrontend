@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styles from "./TestDetail.module.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const TestDetail = () => {
   const { testId } = useParams();
   const [test, setTest] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [wikiResults, setWikiResults] = useState([]); // State for multiple Wikipedia results
+  const navigate = useNavigate(); // Hook for navigation
 
   useEffect(() => {
     console.log(JSON.stringify({ answers: answers }));
@@ -43,7 +46,7 @@ const TestDetail = () => {
                 fetch(
                   `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
                     result.title
-                  )}`
+                  )}` 
                 ).then((res) => res.json())
               );
 
@@ -85,13 +88,40 @@ const TestDetail = () => {
       );
 
       if (response.status === 200) {
-        alert("Test submitted successfully. Score: " + response.data.score);
+        // Show success toast with custom styling
+        toast.success(`Test submitted successfully. Score: ${response.data.score}`, {
+          position: "top-right",
+          autoClose: 5000,
+          className: styles.successToast, // Applying custom class for purple toast
+          hideProgressBar: false,
+          closeButton: true,
+          draggable: true,
+        });
+
+        // Redirect to /mytests page
+        setTimeout(() => {
+          navigate('/mytests'); // Redirect after a delay to allow the toast to be visible
+        }, 2000); // Delay to let the toast message be visible before redirecting
       } else {
-        alert(`Error: Received response status: ${response.status}`);
+        toast.error(`Error: Received response status: ${response.status}`, {
+          position: "top-right",
+          autoClose: 5000,
+          className: styles.errorToast, // Custom error styling
+          hideProgressBar: false,
+          closeButton: true,
+          draggable: true,
+        });
         throw new Error(`Error: ${response.statusText}`);
       }
     } catch (error) {
-      alert("Error occurred during test submission: " + error.message);
+      toast.error(`Error occurred during test submission: ${error.message}`, {
+        position: "top-right",
+        autoClose: 5000,
+        className: styles.errorToast, // Custom error styling
+        hideProgressBar: false,
+        closeButton: true,
+        draggable: true,
+      });
       console.error("Error submitting test:", error);
     }
   };
@@ -160,6 +190,7 @@ const TestDetail = () => {
           ))}
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 };
